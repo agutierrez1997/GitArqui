@@ -257,3 +257,118 @@ section .data
     movss %1, xmm0
     sen %1
 %endmacro
+
+;*********************************************************************
+;Coeficiente real de la matriz W
+;Entradas:
+;       *1 Valor de k
+;       *2 Valor de n
+;       *3 Valor de N (numero de puntos)
+
+;ejemplo:
+
+;coefReal r12, r13, numPuntos (r12 contiene k y r13 contiene n) 
+%macro coefRe 3
+    mov eax, 2
+    cvtsi2ss xmm0, eax      ;se guarda un 2 en xmm0
+    multiply xmm0, [pi]     ;se multiplica por pi
+
+    mov eax, %1 ;k
+    cvtsi2ss xmm1, eax
+    multiply xmm0, xmm1     ; se multiplica por k
+
+    mov eax, %2 ;n
+    cvtsi2ss xmm1, eax
+    multiply xmm0, xmm1     ; se multiplica por n
+
+    mov eax, %3 ;N
+    cvtsi2ss xmm1, eax
+    divide xmm0, xmm1       ; se divide entre N
+
+    movss xmm10, xmm0       ; es mejor no usar xmm0 para calcular el coseno,
+    cos xmm10               ; porque xmm0 se modifica dentro del macro
+%endmacro
+
+;*********************************************************************
+;Coeficiente imaginario de la matriz W
+;Entradas:
+;       *1 Valor de k
+;       *2 Valor de n
+;       *3 Valor de N (numero de puntos)
+
+;ejemplo:
+
+;coefIm r12, r13, numPuntos (r12 contiene k y r13 contiene n) 
+%macro coefIm 3
+    mov eax, 2
+    cvtsi2ss xmm0, eax      ;se guarda un 2 en xmm0
+    multiply xmm0, [pi]     ;se multiplica por pi
+    multiply xmm0, [negativo];se multiplica por -1
+
+    mov eax, %1 ;k
+    cvtsi2ss xmm1, eax
+    multiply xmm0, xmm1     ; se multiplica por k
+
+    mov eax, %2 ;n
+    cvtsi2ss xmm1, eax
+    multiply xmm0, xmm1     ; se multiplica por n
+
+    mov eax, %3 ;N
+    cvtsi2ss xmm1, eax
+    divide xmm0, xmm1       ; se divide entre N
+
+    movss xmm10, xmm0       ; es mejor no usar xmm0 para calcular el seno,
+    sen xmm10               ; porque xmm0 se modifica dentro del macro
+%endmacro
+
+;*********************************************************************
+;FFT con calculo de coeficientes
+;Entradas:
+;   Direcciones de:
+;       *1 vector columna de entrada
+;       *2 dimension del vector (cantidad de puntos)
+
+;ejemplo:
+
+;FFT entrada, 6
+%macro FFT 2
+    mov ebx, %2 ;tama;o de las matrices, se mueve a rbx porque rbx no se ve afectado por llamadas
+
+    mov r12d, 0 ;Contador para  k
+    mov r13d, 0 ;Contador para  n
+    mov r14d, 0 ;Contador para cantidad de X(k) calculados
+
+    pxor xmm4, xmm4 ; se usa xmm4 para almacenar la suma real
+    pxor xmm5, xmm5 ; se usa xmm5 para almacenar la suma imaginaria
+
+%%ciclo1:   ;el desplazamiento en el vector de entrada es de 4, por usar doubleword
+
+    ;multiplicacion parte real
+    coefRe r12d, r13d, %2       ;se calcula cos(2*pi*k*n/N), se guarda en xmm0
+    multiply xmm0,[%1+r13d*4]   ;se multiplica por el elemento del vector entrada, resultado se guarda en xmm0
+    suma xmm0, xmm4             ;suma el resultado de la multip. con lo que hay en xmm4
+    movss xmm4, xmm0            ;guarda eso de nuevo en xmm4
+    
+    ;multiplicacion parte imaginaria
+    coefIm r12d, r13d, %2       ;se calcula -sen(2*pi*k*n/N), se guarda en xmm0
+    multiply xmm0,[%1+r13d*4]   ;resultado se guarda en xmm0
+    suma xmm0, xmm5             ;suma el resultado de la multip. con lo que hay en xmm5
+    movss xmm5, xmm0            ;guarda eso de nuevo en xmm5
+
+    inc r13d    ;se aumenta n
+
+    cmp r13d, ebx ;cuando rbx sea igual a r13 es porque termino una fila
+    jne %%ciclo1
+
+    printF xmm4, [formato1] ;se imprime parte real e imaginaria
+    printF xmm5, [formato2]
+
+    pxor xmm4, xmm4 ; se reinicia la suma
+    pxor xmm5, xmm5 ; se reinicia la suma
+
+    inc r12d    ;se aumenta k
+    mov r13d, 0 ;se reinicia n
+
+    cmp r12d, ebx ;se verifica si ya se calcularon todos los X(k)
+    jne %%ciclo1
+%endmacro
