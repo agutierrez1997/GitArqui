@@ -92,3 +92,90 @@ section .data
 %endmacro
 
 ;*********************************************************************
+;Imprimir numero flotante
+;Entradas: el numero, formato
+
+;ejemplo:
+;section .rodata
+;   formato:    db "%f",0
+;   numero:     dd 22.5
+
+;printF [numero],[formato]
+;printF xmm0, [formato]         <-- cuando el numero esta en un registro como xmm0
+
+%macro printF 2
+
+    push    rbp
+    mov     rbp, rsp
+
+    movss   xmm0, %1
+    movss   dword [rbp-4], xmm0
+    cvtss2sd xmm0, dword [rbp-4]
+
+    lea     edi, %2
+    mov     eax, 1
+    call    printf
+    mov     rsp, rbp
+    pop     rbp
+ 
+%endmacro
+
+;*********************************************************************
+;Toma un numero y devuelve el equivalente en el rango de -Pi a Pi
+;para poder aproximarlo con polinomio de Taylor con un solo periodo de la funcion seno
+;Entradas: el numero, el valor de pi
+;El resultado queda en xmm0
+
+;ejemplo:
+;section .data
+    ;num:        dd 32.0
+    ;pi:         dd 3.1415927
+
+;rango [num],[pi]
+
+%macro rango 2
+    movss xmm0, %1
+    pxor xmm1, xmm1     ;xor para que xmm1 sea 0
+    ucomiss xmm0, xmm1  ;comparacion con 0
+
+    je %%fin             ;si es cero, salta al fin
+    jbe %%negativo       ;si es menor, a negativo
+    jmp %%positivo       ;si es mayor, a postivo
+
+%%positivo:
+    ucomiss xmm0, %2  ;compara con pi:
+    jbe %%fin            ;si es menor, salta a _fin
+
+    resta xmm0, %2    ;se le resta 2*pi
+    resta xmm0, %2
+
+    xor eax, eax
+    cmp eax, 0
+    je %%positivo
+
+%%negativo:
+    ;se le cambia el signo para que quede positivo
+    mulss xmm0, [negativo]
+
+;se hace lo mismo que cuando es positivo:
+%%negativo2:
+    ucomiss xmm0, %2  ;compara con pi:
+    jbe %%cambioSigno            ;si es menor, salta a cambio de signo
+
+    resta xmm0, %2    ;se le resta 2*pi
+    resta xmm0, %2
+
+    xor eax, eax
+    cmp eax, 0
+    je %%negativo2
+
+%%cambioSigno: ;cambia el signo del resultado, porque -sin(x)=sin(-x)
+
+    mulss xmm0, [negativo] ;se multiplica por -1
+
+    xor eax, eax ;se salta a fin
+    cmp eax, 0
+    je %%fin
+
+%%fin:
+%endmacro
