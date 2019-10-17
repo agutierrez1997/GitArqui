@@ -149,9 +149,7 @@ section .data
     resta xmm0, %2    ;se le resta 2*pi
     resta xmm0, %2
 
-    xor eax, eax
-    cmp eax, 0
-    je %%positivo
+    jmp %%positivo
 
 %%negativo:
     ;se le cambia el signo para que quede positivo
@@ -165,17 +163,11 @@ section .data
     resta xmm0, %2    ;se le resta 2*pi
     resta xmm0, %2
 
-    xor eax, eax
-    cmp eax, 0
-    je %%negativo2
+    jmp %%negativo2
 
 %%cambioSigno: ;cambia el signo del resultado, porque -sin(x)=sin(-x)
 
     mulss xmm0, [negativo] ;se multiplica por -1
-
-    xor eax, eax ;se salta a fin
-    cmp eax, 0
-    je %%fin
 
 %%fin:
 %endmacro
