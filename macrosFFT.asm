@@ -41,3 +41,54 @@ section .data
 	mov edi, 0
 	syscall
 %endmacro
+
+;*********************************************************************
+;Multiplicacion punto flotante
+;Entrada: los dos datos
+;El resultado queda en xmm0
+
+%macro multiply 2
+
+    movss   xmm0, %1
+    mulss   xmm0, %2
+
+%endmacro
+
+;*********************************************************************
+;Division punto flotante
+;Entrada: los dos datos
+;El resultado queda en xmm0
+;*xmm0 NO puede ser el divisor*
+
+%macro divide 2
+
+    movss   xmm0, %1
+    divss   xmm0, %2 
+
+%endmacro
+
+;*********************************************************************
+;Suma punto flotante
+;Entrada: los dos datos
+;El resultado queda en xmm0
+
+%macro suma 2
+
+    movss   xmm0, %1
+    addss   xmm0, %2
+
+%endmacro
+
+;*********************************************************************
+;Resta punto flotante
+;Entrada: minuendo, sustraendo
+;El resultado queda en xmm0
+
+%macro resta 2
+
+    movss   xmm0, %1
+    subss   xmm0, %2
+
+%endmacro
+
+;*********************************************************************
