@@ -179,3 +179,89 @@ section .data
 
 %%fin:
 %endmacro
+
+;*********************************************************************
+;Aproximacion de funcion Seno
+;Entradas: el numero en radianes
+;El resultado queda en xmm0
+
+;ejemplo:
+;section .data
+    ;num:        dd 32.0
+
+;sen [num]
+%macro sen 1
+    rango %1, [pi] ;se pone el numero en el rango de -pi a pi
+    movss %1, xmm0
+
+    ;la suma se va almacenando en xmm1:
+
+    ;primer termino de la serie:    x
+    movss xmm1, %1
+
+    ;segundo termino de la serie:   -x^3/3!
+    movss xmm0, %1
+    multiply xmm0, %1
+    multiply xmm0, %1
+    multiply xmm0, [factor3]
+    multiply xmm0, [negativo] ;se multiplica por -1
+
+    suma xmm0,xmm1      ;se suma con el termino anterior, resultado en xmm0
+    movss xmm1, xmm0    ;se almacena el resultado en xmm1
+
+    ;tercer termino de la serie:    x^5/5!
+    movss xmm0, %1
+    multiply xmm0, %1
+    multiply xmm0, %1
+    multiply xmm0, %1
+    multiply xmm0, %1
+    multiply xmm0, [factor5]
+
+    suma xmm0,xmm1      ;se suma con los terminos anteriores, resultado en xmm0
+    movss xmm1, xmm0    ;se almacena el resultado en xmm1       
+
+    ;cuarto termino de la serie:    -x^7/7!
+    movss xmm0, %1
+    multiply xmm0, %1
+    multiply xmm0, %1
+    multiply xmm0, %1
+    multiply xmm0, %1
+    multiply xmm0, %1
+    multiply xmm0, %1
+    multiply xmm0, [factor7]
+    multiply xmm0, [negativo] ;se multiplica por -1
+
+    suma xmm0,xmm1      ;se suma con los terminos anteriores, resultado en xmm0
+    movss xmm1, xmm0    ;se almacena el resultado en xmm1 
+
+    ;quinto termino de la serie:    x^9/9!
+    movss xmm0, %1
+    multiply xmm0, %1
+    multiply xmm0, %1
+    multiply xmm0, %1
+    multiply xmm0, %1
+    multiply xmm0, %1
+    multiply xmm0, %1
+    multiply xmm0, %1
+    multiply xmm0, %1
+    multiply xmm0, [factor9]
+
+    suma xmm0,xmm1      ;se suma con los terminos anteriores, resultado en xmm0
+%endmacro
+
+;*********************************************************************
+;Aproximacion de funcion Coseno
+;Entradas: el numero en radianes
+;El resultado queda en xmm0
+
+;ejemplo:
+;section .data
+    ;num:        dd 32.0
+
+;cos [num]
+%macro cos 1
+    movss xmm0, %1
+    suma xmm0, [piMedios] ;se le suma pi medios para calcular coseno a partir de seno
+    movss %1, xmm0
+    sen %1
+%endmacro
