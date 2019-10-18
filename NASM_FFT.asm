@@ -30,8 +30,8 @@ extern printf
 
 
 section .data
-	formato1:  	db "%15.4f	",0
-	formato2:  	db "%+.4fj",10,0
+	formato1:  	db "%15.4e	",0
+	formato2:  	db "%+.4fe",10,0
 
 	;necesario para calcular seno y coseno:
     pi:         dd 3.14159265359
