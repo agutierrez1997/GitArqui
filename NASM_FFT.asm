@@ -12,7 +12,7 @@
 ; *** Compilar este archivo ***
 
 ;Compilar y correr:
-;nasm FFTfinal.asm -f elf64 -o FFTfinal.o && gcc -no-pie FFTfinal.o -o FFTfinal && ./FFTfinal
+;nasm NASM_FFT.asm -f elf64 -o NASM_FFT.o && gcc -no-pie NASM_FFT.o -o NASM_FFT && ./NASM_FFT
 
 ;%include "macrosFFT.asm"
 
