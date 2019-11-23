@@ -46,7 +46,7 @@ always_comb
         idle:
             if (Run) begin
                 if (RW) nextstate <=write; //RW=1 => write
-                else    nextstate <=write; //RW=0 => read
+                else    nextstate <=read; //RW=0 => read
             end
             
         read:
