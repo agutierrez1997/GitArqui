@@ -1,0 +1,19 @@
+module TBDeco();
+logic [2:0] in;
+logic [7:0] out;
+
+//instanciando
+DecoParametrizable dut(in,out);
+
+initial begin
+in = 101; #10;
+in = 100; #10;
+in = 010; #10;
+in = 000; #10;
+in = 011; #10;
+
+
+
+end
+
+endmodule
