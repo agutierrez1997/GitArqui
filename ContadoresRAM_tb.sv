@@ -10,10 +10,9 @@ module ContadoresRAM_tb(
     logic           count_read;
     logic           count_reset;
     logic           gen_reset;
-    logic [5:0]     counter;
     logic [3:0]     count_out;
 
-    ContadoresRAM #(6,4) dut1(clk, write_enable, adress, count_read, count_reset, gen_reset, counter, count_out);
+    ContadoresRAM #(6,4) dut1(clk, write_enable, adress, count_read, count_reset, gen_reset, count_out);
 
     initial begin
         clk = 0;
