@@ -32,7 +32,7 @@ typedef enum logic [2:0] //3 bits, porque son 8 posibles estados
      writeThrough} statetype;
      
 //se tiene 2 señales tipo statetype:
-statetype [1:0] state, nextstate;
+statetype [2:0] state, nextstate;
 
 // logica reset:
 always_ff @(posedge clk, posedge reset)
