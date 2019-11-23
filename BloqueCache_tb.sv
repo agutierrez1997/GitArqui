@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 
-module RAM_tb(
+module BloqueCache_tb(
 
     );
     logic           clk;
@@ -12,7 +12,7 @@ module RAM_tb(
     logic           gen_reset;
     logic [31:0]    data_out;
 
-    RAM #(10,32) dut1(clk, write_enable,read_enable, adress, data_in, gen_reset, data_out);
+    BloqueCache #(10,32) dut1(clk, write_enable,read_enable, adress, data_in, gen_reset, data_out);
 
     initial begin
         clk = 0;
