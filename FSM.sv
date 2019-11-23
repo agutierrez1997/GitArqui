@@ -17,7 +17,7 @@ module FSM (
     input logic Data_ReadyM,
     input logic Process_Data,
     
-    output logic y //las salidas aun se deben definir
+    output logic [2:0] y //las salidas aun se deben definir
     );
     
 //se crea el tipo de variable 'statetype'
@@ -77,7 +77,14 @@ always_comb
     endcase
     
  // logica de salida
- 
- assign y=(state==idle); //se asigna 1 a "y" cuando el estado es "idle" (ejemplo)
+ always_comb
+ if (state==idle) assign y=3'b000;
+ else if (state==read) assign y=3'b001;
+ else if (state==readHit) assign y=3'b010;
+ else if (state==readMiss) assign y=3'b011;
+ else if (state==write) assign y=3'b100;
+ else if (state==writeHit) assign y=3'b101;
+ else if (state==writeMiss) assign y=3'b110;
+ else if (state==writeThrough) assign y=3'b111;
  
  endmodule
