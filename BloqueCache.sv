@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 
-module RAM #(parameter bitsDirect = 10, sizeBitLine = 32)
+module BloqueCache #(parameter bitsDirect = 10, sizeBitLine = 32)
     (input logic                    clk,
      input logic                    write_enable,
      input logic                    read_enable,
