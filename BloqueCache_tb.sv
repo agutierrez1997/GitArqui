@@ -1,22 +1,25 @@
 `timescale 1ns / 1ps
 
-
 module BloqueCache_tb(
 
     );
     logic           clk;
     logic           write_enable;
+    logic [1:0]     write_enable_cpu; //habilita escritura desde CPU
+    logic           write_enable_ram; //habilita escritura desde RAM
     logic           read_enable;
     logic [9:0]     adress;
-    logic [31:0]    data_in;
+    logic [63:0]    data_in;
     logic           gen_reset;
-    logic [31:0]    data_out;
+    logic [63:0]    data_out;
 
-    BloqueCache #(10,64) dut1(clk, write_enable,read_enable, adress, data_in, gen_reset, data_out);
+    BloqueCache #(10,64) dut1(clk, write_enable,write_enable_cpu,write_enable_ram,read_enable, adress, data_in, gen_reset, data_out);
 
     initial begin
         clk = 0;
         write_enable = 0;
+        write_enable_cpu = 0;
+        write_enable_ram = 0;
         read_enable = 0;
         adress = 0;
         data_in = 0;
@@ -24,6 +27,14 @@ module BloqueCache_tb(
         
         gen_reset = 1; #10
         gen_reset = 0; #10
+        
+        adress = 10'b0000000001; data_in = 15; write_enable = 0; read_enable = 1; #10
+        write_enable = 1; write_enable_ram = 1; #10
+        
+        write_enable_ram = 0; write_enable_cpu = 2'b01; #10;
+        write_enable_cpu = 2'b10; #10;
+        write_enable_cpu = 2'b11; #10;
+        write_enable = 0; #10;
         
         adress = 10'b0000000011; data_in = 15; write_enable = 0; read_enable = 1; #10
         write_enable = 0; #10
@@ -50,8 +61,6 @@ module BloqueCache_tb(
         begin
         clk <= 1; # 5; clk <= 0; # 5;
         end 
-        
-    
-        
+            
 endmodule
 
