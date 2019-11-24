@@ -23,7 +23,7 @@
 module Cache_TB();
 
     logic           clk;
-    logic  [3:0]         write_enable;
+    logic  [3:0]    write_enable;
     logic           read_enable;
     logic [9:0]     adress;
     logic [63:0]    data_in;
