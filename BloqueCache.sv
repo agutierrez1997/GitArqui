@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 
-module BloqueCache #(parameter bitsDirect = 10, sizeBitLine = 32)
+module BloqueCache #(parameter bitsDirect = 10, sizeBitLine = 64)
     (input logic                    clk,
      input logic                    write_enable,
      input logic                    read_enable,
@@ -11,7 +11,7 @@ module BloqueCache #(parameter bitsDirect = 10, sizeBitLine = 32)
      output logic [sizeBitLine-1:0] data_out
      );
      
-     logic [2*sizeBitLine-1:0] mem[2**bitsDirect-1:0];
+     logic [sizeBitLine-1:0] mem[2**bitsDirect-1:0];
      
      always_ff@(posedge clk or posedge gen_reset) begin
         if (gen_reset) mem <= '{default:'d0};
