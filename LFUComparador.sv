@@ -1,28 +1,7 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 11/24/2019 09:04:15 PM
-// Design Name: 
-// Module Name: LFUComparador
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
 
 module LFUComparador #(parameter sizeCounter = 4)(
     
-    input logic                         clk,
     input logic [sizeCounter-1:0]       count0,
     input logic [sizeCounter-1:0]       count1,
     input logic [sizeCounter-1:0]       count2,
@@ -31,36 +10,23 @@ module LFUComparador #(parameter sizeCounter = 4)(
     output logic [1:0]                  cache_sel
     
     );
-
-    always@(posedge clk) begin
-        
-        if (count0>=count1 && count2>=count3) begin
-            
-            if (count1>=count3) assign cache_sel = 2'b11;
-            else assign cache_sel = 2'b01;
-                
-        end
     
-        if (count0<count1 && count2<count3) begin
-            
-            if (count0>=count2) assign cache_sel = 2'b10;
-            else assign cache_sel = 2'b00;
-                
-        end
+    logic [3:0] menor = 0;
+    
+    always_comb begin
         
-        if (count0>=count1 && count2<=count3) begin
-            
-            if (count1>=count2) assign cache_sel = 2'b10;
-            else assign cache_sel = 2'b01;
-                
-        end
+        if (count0<=count1) menor = count0;
+
+        else menor = count1;
         
-        if (count0<count1 && count2>count3) begin
-            
-            if (count0>=count3) assign cache_sel = 2'b11;
-            else assign cache_sel = 2'b00;
-                
-        end
+        if (menor>=count2) menor = count2;
+        
+        if (menor>=count3) menor = count3;
+        
+        if (menor==count0) cache_sel = 0;
+        if (menor==count1) cache_sel = 1;
+        if (menor==count2) cache_sel = 2;
+        if (menor==count3) cache_sel = 3;
     
     end
     
