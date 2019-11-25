@@ -15,9 +15,9 @@ module Cache #(parameter bitsDirect = 10, sizeBitLine = 64 )
 
     );
     
-    BloqueCache BloqueCache1(clk,write_enable[0],write_enable_cpu,write_enable_ram,read_enable,adress,data_in,gen_reset,data_out1);
-    BloqueCache BloqueCache2(clk,write_enable[1],write_enable_cpu,write_enable_ram,read_enable,adress,data_in,gen_reset,data_out2);
-    BloqueCache BloqueCache3(clk,write_enable[2],write_enable_cpu,write_enable_ram,read_enable,adress,data_in,gen_reset,data_out3);
-    BloqueCache BloqueCache4(clk,write_enable[3],write_enable_cpu,write_enable_ram,read_enable,adress,data_in,gen_reset,data_out4);
+    BloqueCache #(10,64) BloqueCache1(clk,write_enable[0],write_enable_cpu,write_enable_ram,read_enable,adress,data_in,gen_reset,data_out1);
+    BloqueCache #(10,64) BloqueCache2(clk,write_enable[1],write_enable_cpu,write_enable_ram,read_enable,adress,data_in,gen_reset,data_out2);
+    BloqueCache #(10,64) BloqueCache3(clk,write_enable[2],write_enable_cpu,write_enable_ram,read_enable,adress,data_in,gen_reset,data_out3);
+    BloqueCache #(10,64) BloqueCache4(clk,write_enable[3],write_enable_cpu,write_enable_ram,read_enable,adress,data_in,gen_reset,data_out4);
     
 endmodule
