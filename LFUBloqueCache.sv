@@ -29,6 +29,13 @@ module LFUBloqueCache #(parameter bitsDirect = 10, sizeBitLine = 64, sizeCounter
      
      logic [sizeCounter-1:0] counter[2**bitsDirect-1:0];
      
+     logic [bitsDirect-1:0] dirArriba;
+     
+     logic [bitsDirect-1:0] dirAbajo;
+     
+     assign dirArriba = counter[adress-1];
+     assign dirAbajo = counter[adress+1];
+     
      //logic [sizeCounter-1:0] minCounter;
      
      //assign CountOut = counter[adress];
@@ -66,11 +73,76 @@ module LFUBloqueCache #(parameter bitsDirect = 10, sizeBitLine = 64, sizeCounter
                 assign data_out = mem[adress];
                 counter[adress] <= counter[adress]+1;
                 
-                if (counter[adress]<=minCounter) begin
+                //if (counter[adress]<=minCounter) begin
+                //    minCounter <= counter[adress];
+                //    min_adress <= adress;
+                //end
+                
+                //////////////////////////////////////////////////////////
+                
+                //*******************Lógica que toma en cuenta valores adyacentes del contador
+                
+                if(counter[adress]>=minCounter && counter[adress]>=dirArriba && counter[adress]>=dirAbajo && minCounter<=dirArriba && minCounter<=dirAbajo) begin
+                    minCounter <= minCounter;
+                    min_adress <= min_adress;
+                //
+                end
+                //
+                if(counter[adress]>minCounter && minCounter>=dirArriba && minCounter<dirAbajo) begin
+                    minCounter <= dirArriba;
+                    min_adress <= adress-1;
+                end
+                //
+                if(counter[adress]>minCounter && minCounter<dirArriba && minCounter>=dirAbajo) begin
+                    minCounter <= dirAbajo;
+                    min_adress <= adress+1;
+                
+                end
+                //
+                if(counter[adress]>minCounter && minCounter<dirArriba && minCounter<dirAbajo && dirAbajo>=dirArriba) begin
+                    minCounter <= dirArriba;
+                    min_adress <= adress-1;
+                
+                end
+                //
+                if(counter[adress]>minCounter && minCounter<dirArriba && minCounter<dirAbajo && dirAbajo<dirArriba) begin
+                    minCounter <= dirAbajo;
+                    min_adress <= adress+1;
+                
+                end
+                //
+                if(counter[adress]<=minCounter && counter[adress]<dirArriba && counter[adress]<dirAbajo) begin
                     minCounter <= counter[adress];
                     min_adress <= adress;
-                end
                 
+                end
+                //
+                if(counter[adress]<=minCounter && counter[adress]>=dirArriba && counter[adress]<dirAbajo) begin
+                    minCounter <= dirArriba;
+                    min_adress <= adress-1;
+                
+                end
+                //
+                if(counter[adress]<=minCounter && counter[adress]<dirArriba && counter[adress]>=dirAbajo) begin
+                    minCounter <= dirAbajo;
+                    min_adress <= adress+1;
+                
+                end
+                //
+                if(counter[adress]<=minCounter && counter[adress]>=dirArriba && counter[adress]>=dirAbajo && dirAbajo>=dirArriba) begin
+                    minCounter <= dirArriba;
+                    min_adress <= adress-1;
+                
+                end
+                //
+                if(counter[adress]<=minCounter && counter[adress]>=dirArriba && counter[adress]>=dirAbajo && dirAbajo<dirArriba) begin
+                    minCounter <= dirAbajo;
+                    min_adress <= adress+1;
+                
+                end
+                                
+                /////////////////////////////////////////////////////////
+           
                 if (adress == min_adress) minCounter <= minCounter+1;
                 
             end
