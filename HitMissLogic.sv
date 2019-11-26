@@ -2,6 +2,7 @@ module HitMissLogic(
     input logic [35:0] tagAddress,tagBloque1,tagBloque2,tagBloque3,tagBloque4,
     input logic vBit1,vBit2,vBit3,vBit4, //Valid Bit de cada bloque de Tags
     output logic hit //Si es 1 es hit, sino es miss
+    output logic and1,and2,and3,and4
     );
 
 wire salidaComp1;
@@ -25,6 +26,12 @@ ANDValidBit and1(salidaComp1,vBit1,salidaAND1);
 ANDValidBit and2(salidaComp2,vBit2,salidaAND2);
 ANDValidBit and3(salidaComp3,vBit3,salidaAND3);
 ANDValidBit and4(salidaComp4,vBit4,salidaAND4);
+
+assign and1 = salidaAND1;
+assign and2 = salidaAND2;
+assign and3 = salidaAND3;
+assign and4 = salidaAND4;
+
 
 ORHit ORHit(salidaAND1,salidaAND2,salidaAND3,salidaAND4,hit);    //Si alguna de las entradas de la OR es 1, hay un hit
 
