@@ -44,7 +44,7 @@ wire [63:0] DataOutCache0; //salen de cache y van al mux que deja pasar solo uno
 wire [63:0] DataOutCache1;
 wire [63:0] DataOutCache2;
 wire [63:0] DataOutCache3;
-Cache #(10,64) MemCache(clk,write_enable_from_LFU,write_enable_cpu,write_enable_ram,ReadEnableData,address[11:2],DataOutMux_to_DataInCache,gen_reset,DataOutCache0,DataOutCache1,DataOutCache2,DataOutCache3);
+Cache #(10,64) MemCache(clk,write_enable_from_LFU,address[1:0],write_enable_ram,ReadEnableData,address[11:2],DataOutMux_to_DataInCache,gen_reset,DataOutCache0,DataOutCache1,DataOutCache2,DataOutCache3);
 
 //Logica de HIT (universo 6)
 wire hit;
