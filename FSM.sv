@@ -16,8 +16,13 @@ module FSM (
     input logic Data_Ready,
     input logic Data_ReadyM,
     input logic Process_Data,
-    
-    output logic [2:0] y //las salidas aun se deben definir
+    output logic SelecMemCPU,
+    output logic ReadEnableTag,
+    output logic ReadEnableData,
+    output logic gen_reset,
+    output logic write_enable_ram,
+    output logic enable_contadores,
+    output logic count_read
     );
     
 //se crea el tipo de variable 'statetype'
@@ -31,7 +36,7 @@ typedef enum logic [2:0] //3 bits, porque son 8 posibles estados
      writeMiss,
      writeThrough} statetype;
      
-//se tiene 2 señales tipo statetype:
+//se tiene 2 seÃ±ales tipo statetype:
 statetype [2:0] state, nextstate;
 
 // logica reset:
@@ -67,7 +72,7 @@ always_comb
             if (Data_ReadyM) nextstate <=read;
             
         writeMiss:
-            if (Process_Data) nextstate <=writeThrough;
+            if (Data_ReadyM) nextstate <=write;
             
         writeThrough:
             if (Data_Ready) nextstate <=idle;
@@ -78,13 +83,87 @@ always_comb
     
  // logica de salida
  always_comb
- if (state==idle) assign y=3'b000;
- else if (state==read) assign y=3'b001;
- else if (state==readHit) assign y=3'b010;
- else if (state==readMiss) assign y=3'b011;
- else if (state==write) assign y=3'b100;
- else if (state==writeHit) assign y=3'b101;
- else if (state==writeMiss) assign y=3'b110;
- else if (state==writeThrough) assign y=3'b111;
+ if (state==idle) begin
+    SelecMemCPU =0;          
+    ReadEnableTag = 0;        
+    ReadEnableData = 0;      
+    gen_reset = 0;           
+    write_enable_ram = 0;     
+    enable_contadores = 0;    
+    count_read = 0;           
+ 
+ end
+ else if (state==read) begin
+    SelecMemCPU =0;          
+    ReadEnableTag = 1;        
+    ReadEnableData = 1;      
+    gen_reset = 0;           
+    write_enable_ram = 0;     
+    enable_contadores = 0;    
+    count_read = 0;
+ 
+ 
+ end
+ else if (state==readHit) begin
+    SelecMemCPU =0;          
+    ReadEnableTag = 1;        
+    ReadEnableData = 1;      
+    gen_reset = 0;           
+    write_enable_ram = 0;     
+    enable_contadores = 1;    
+    count_read = 0;
+ 
+ end
+ else if (state==readMiss) begin
+    SelecMemCPU = 0; //Si es 0, se selecciona la RAM          
+    ReadEnableTag = 0;        
+    ReadEnableData = 0;      
+    gen_reset = 0;           
+    write_enable_ram = 1;     
+    enable_contadores = 1;    
+    count_read = 1;
+ 
+ 
+ end
+ else if (state==write) begin
+    SelecMemCPU =0;          
+    ReadEnableTag = 1;        
+    ReadEnableData = 0;      
+    gen_reset = 0;           
+    write_enable_ram = 0;     
+    enable_contadores = 0;    
+    count_read = 0;
+ 
+ end
+ else if (state==writeHit) begin
+    SelecMemCPU = 1;  //Escribe desde el CPU        
+    ReadEnableTag = 0;        
+    ReadEnableData = 0;      
+    gen_reset = 0;           
+    write_enable_ram = 0;     
+    enable_contadores = 1;    
+    count_read = 0;
+ 
+ end
+ else if (state==writeMiss) begin
+    SelecMemCPU = 0;          
+    ReadEnableTag = 0;        
+    ReadEnableData = 0;      
+    gen_reset = 0;           
+    write_enable_ram = 1;     
+    enable_contadores = 1;    
+    count_read = 1;
+ 
+ end
+ else if (state==writeThrough) begin
+    SelecMemCPU =0;          
+    ReadEnableTag = 0;        
+    ReadEnableData = 0;      
+    gen_reset = 0;           
+    write_enable_ram = 0;     
+    enable_contadores = 0;    
+    count_read = 0;
+ 
+ end
  
  endmodule
