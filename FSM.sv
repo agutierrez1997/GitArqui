@@ -22,7 +22,8 @@ module FSM (
     output logic gen_reset,
     output logic write_enable_ram,
     output logic enable_contadores,
-    output logic count_read
+    output logic count_read,
+    output logic [2:0] salida
     );
     
 //se crea el tipo de variable 'statetype'
@@ -36,15 +37,12 @@ typedef enum logic [2:0] //3 bits, porque son 8 posibles estados
      writeMiss,
      writeThrough} statetype;
      
-//se tiene 2 seÃ±ales tipo statetype:
+//se tiene 2 seÃƒÂ±ales tipo statetype:
 statetype [2:0] state, nextstate;
 
 // logica reset:
 always_ff @(posedge clk, posedge reset)
-    if (reset)  begin
-    state <=idle;
-    gen_reset=1;
-    end
+    if (reset)  state <=idle;
     else        state <=nextstate;
     
 // logica de estado siguiente:
@@ -93,7 +91,8 @@ always_comb
     gen_reset = 0;           
     write_enable_ram = 0;     
     enable_contadores = 0;    
-    count_read = 0;           
+    count_read = 0;
+    salida=3'b000;           
  
  end
  else if (state==read) begin
@@ -104,7 +103,7 @@ always_comb
     write_enable_ram = 0;     
     enable_contadores = 0;    
     count_read = 0;
- 
+    salida=3'b001;
  
  end
  else if (state==readHit) begin
@@ -115,7 +114,7 @@ always_comb
     write_enable_ram = 0;     
     enable_contadores = 1;    
     count_read = 0;
- 
+    salida=3'b011;
  end
  else if (state==readMiss) begin
     SelecMemCPU = 0; //Si es 0, se selecciona la RAM          
@@ -125,7 +124,7 @@ always_comb
     write_enable_ram = 1;     
     enable_contadores = 1;    
     count_read = 1;
- 
+    salida=3'b100;
  
  end
  else if (state==write) begin
@@ -136,7 +135,7 @@ always_comb
     write_enable_ram = 0;     
     enable_contadores = 0;    
     count_read = 0;
- 
+    salida=3'b010;
  end
  else if (state==writeHit) begin
     SelecMemCPU = 1;  //Escribe desde el CPU        
@@ -146,7 +145,7 @@ always_comb
     write_enable_ram = 0;     
     enable_contadores = 1;    
     count_read = 0;
- 
+    salida=3'b101;
  end
  else if (state==writeMiss) begin
     SelecMemCPU = 0;          
@@ -156,7 +155,7 @@ always_comb
     write_enable_ram = 1;     
     enable_contadores = 1;    
     count_read = 1;
- 
+    salida=3'b110;
  end
  else if (state==writeThrough) begin
     SelecMemCPU =0;          
@@ -166,7 +165,7 @@ always_comb
     write_enable_ram = 0;     
     enable_contadores = 0;    
     count_read = 0;
- 
+    salida=3'b111;
  end
  
  endmodule
