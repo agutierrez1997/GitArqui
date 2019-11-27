@@ -41,7 +41,10 @@ statetype [2:0] state, nextstate;
 
 // logica reset:
 always_ff @(posedge clk, posedge reset)
-    if (reset)  state <=idle;
+    if (reset)  begin
+    state <=idle;
+    gen_reset=1;
+    end
     else        state <=nextstate;
     
 // logica de estado siguiente:
