@@ -7,7 +7,7 @@ module LFUComparador_tb();
     logic [3:0]             count2;
     logic [3:0]             count3;
 
-    logic [1:0]             cache_sel;
+    logic [3:0]             cache_sel;
 
 
     LFUComparador #(4) dut(count0, count1, count2, count3, cache_sel);
